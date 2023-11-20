@@ -6,7 +6,8 @@
 <font size = "5">
 Write your Emory ID as a comment (use double dash)
 -- SQLBook: Code
-
+-- Active: 1698696604054@@127.0.0.1@5432@postgres
+-- 2554090
 -- SQLBook: Markup
 <font size = "5" >
 This quiz is open book 
@@ -21,7 +22,7 @@ Write the following message as a comment: <br>
 "I will abide by Emory's code of conduct"
 
 -- SQLBook: Code
-
+-- I will abide by Emory's code of conduct.
 -- SQLBook: Markup
 
 <font size = "5">
@@ -53,8 +54,26 @@ HINT: Include any column names with upper case in doube quotations, <br> e.g.
 "raceId". If you don't you'll get an error
 -- SQLBook: Code
 -- Write your own code
+-- Active: 1698696604054@@127.0.0.1@5432@formula1
+DROP DATABASE IF EXISTS formula1;
+CREATE DATABASE formula1; 
+
+CREATE TABLE lap_times (
+    raceId INT,
+    driverId INT,
+    lap INT,
+    position INT,
+    time VARCHAR(255),
+    milliseconds INT
+);
 -- SQLBook: Code
+-- Active: 1698696604054@@127.0.0.1@5432@formula1
 -- Write your own code
+INSERT INTO lap_times (raceId, driverId, lap, position, time, milliseconds)
+VALUES
+(841, 20, 1, 1, '01:38.1', 98109),
+(167, 64, 48, 10, '01:14.0', 73984),
+(341, 3, 65, 13, '01:29.6', 89626);
 -- SQLBook: Markup
 <font size = "5">
 
@@ -68,6 +87,21 @@ HINT: Include any column names with upper case in doube quotations, <br> e.g.
 
 HINT: Remember to use the ```create_engine``` and ```to_sql``` functions <br>
 See Lectures 17 and 18 for more details.
+-- SQLBook: Code
+-- Active: 1698696604054@@127.0.0.1@5432@postgres
+pit_stops = pd.read_csv("data_raw/pit_stops.csv")
+url_server = URL.create(
+    "postgresql",
+    host = 'localhost',
+    database = 'formula1',
+    username = 'postgres',
+    port = 5432,
+    password  = '12345')
+connection = create_engine(url_server)
+pit_stops.to_sql("pit_stops", 
+                con=connection, 
+                if_exists="replace", 
+                index=False)
 -- SQLBook: Markup
 <font size = "5">
 
@@ -85,7 +119,12 @@ HINT: Remember to always refer to column names with at <br>
 least one capital letter with double quotations, e.g. "driverId" <br>
 HINT: See Lecture 16
 -- SQLBook: Code
+-- Active: 1698696604054@@127.0.0.1@5432@formula1
 -- Write your own code
+SELECT *
+FROM pit_stops
+WHERE lap BETWEEN 1 AND 5
+ORDER BY "milliseconds" ASC;
 -- SQLBook: Markup
 <font size = "5">
 
@@ -100,7 +139,11 @@ grouped by "driverId" using SELECT, FROM, and GROUP BY.
 
 HINT: See the end of lectures 16
 -- SQLBook: Code
+-- Active: 1698696604054@@127.0.0.1@5432@formula1
 -- Write your own code
+SELECT "driverId", MIN("milliseconds") AS min_milliseconds, MAX("milliseconds") AS max_milliseconds
+FROM pit_stops
+GROUP BY "driverId";
 -- SQLBook: Markup
 
 <font size = "5">
@@ -118,6 +161,10 @@ HINT: Remember to include "driverId" in double <br>
 quotations it includes a mix of lower case and upper case letters
 -- SQLBook: Code
 -- Write your own code
+SELECT "driverId", COUNT(*) AS row_count
+FROM pit_stops
+GROUP BY "driverId"
+ORDER BY row_count DESC;
 -- SQLBook: Markup
 
 <font size = "5">
@@ -132,6 +179,10 @@ number of rows by "driverId" ```GROUP BY``` <br>
  using ```HAVING ```
 -- SQLBook: Code
 -- Write your own code
+SELECT "driverId", COUNT(*) AS row_count
+FROM pit_stops
+GROUP BY "driverId"
+HAVING COUNT(*) > 200;
 -- SQLBook: Code
 
 -- BASIC SYNTAX OF SQL:
